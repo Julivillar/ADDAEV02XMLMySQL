@@ -40,21 +40,16 @@ public class LoginView {
 		});
 	}
 
-	/**
-	 * Create the application.
-	 */
 	public LoginView() {
 		initialize();
 	}
 
-	/**
-	 * Initialize the contents of the frame.
-	 */
 	private void initialize() {
 		frame = new JFrame();
 		frame.setBounds(100, 100, 489, 329);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.getContentPane().setLayout(null);
+		frame.setVisible(true);
 		
 		usernameField = new JTextField();
 		usernameField.setBounds(240, 89, 86, 20);
@@ -81,8 +76,6 @@ public class LoginView {
 		btnNewButton.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				
-				System.out.println("trying login");
 				String username = usernameField.getText();
 				char[] password = passwordField.getPassword();
 				String loggedInUser = "";
@@ -107,9 +100,6 @@ public class LoginView {
 				} catch (SQLException e1) {  
 					e1.printStackTrace();
 				}
-				
-				
-				
 			}
 		});
 		btnNewButton.addActionListener(new ActionListener() {

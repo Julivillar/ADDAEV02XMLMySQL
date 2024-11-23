@@ -52,10 +52,6 @@ public class XMLController {
      */
     public static String generateXMLFromFile(String[] tempArr) {
         XMLController xmlFileContent = new XMLController(tempArr);
-        // Map<String, String> namedArray = new HashMap<>();
-        // for (int i = 0; i < tempArr.length; i++) {
-        // namedArray.put(headers[i], tempArr[i]);
-        // }
 
         DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder dBuilder;
@@ -63,7 +59,7 @@ public class XMLController {
             dBuilder = dbFactory.newDocumentBuilder();
             Document doc = dBuilder.newDocument();
             Element root = doc.createElement("Country");
-            /* root.appendChild(doc.createTextNode(xmlFileContent.country)); */
+
             doc.appendChild(root);
 
             Element country = doc.createElement("country");
@@ -130,7 +126,8 @@ public class XMLController {
 
     /**
      * 
-      */
+     * @param con
+    */
     public static void importXMLIntoDatabase(Connection con) {
         preparePopulationTable(con);
         try {

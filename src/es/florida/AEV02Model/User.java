@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,21 +22,8 @@ public class User {
 	public User(String username, char[] pw) throws NoSuchAlgorithmException {
 		this.username = username;
 		this.pw = DBConnection.hashPw(pw);
-		this.type = getUserType(username);
 	}
 
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
-	public String getUserType(String user) {
-
-		return getType();
-	}
 
 	public String login() throws ClassNotFoundException, SQLException {
 		Connection con = DBConnection.loginDB(this.username, this.pw);
@@ -46,31 +32,16 @@ public class User {
 			return "false";
 		}
 		con.close();
-		if (!this.username.equals("admin")) {
-			return "client";
-		} else {
+		if (this.username.equals("admin")) {
 			return "admin";
+		} else {
+			return "client";
 		}
-		/*
-		 * PreparedStatement ps =
-		 * con.prepareStatement("SELECT * FROM users WHERE login = ?");
-		 * ps.setString(1, username);
-		 * String type = "";
-		 * ResultSet rs = ps.executeQuery();
-		 * while (rs.next()) {
-		 * type = rs.getString("type");
-		 * }
-		 * setType(type);
-		 * con.close();
-		 * return type;
-		 */
 	}
 
 	public static Connection adminLogin(String username, String pw) throws ClassNotFoundException, SQLException {
-		System.out.println("admin login");
 		Connection con = DBConnection.loginDB(username, pw);
 		if (con == null) {
-			System.out.println("Invalid connection");
 			return con;
 		}
 
@@ -78,10 +49,8 @@ public class User {
 	}
 
 	public static Connection clientLogin(String username, String pw) throws ClassNotFoundException, SQLException {
-		System.out.println("client login");
 		Connection con = DBConnection.loginDB(username, pw);
 		if (con == null) {
-			System.out.println("Invalid connection");
 			return con;
 		}
 
@@ -97,30 +66,6 @@ public class User {
 			return "passwordKO";
 		}
 		try {
-			/*
-			 * PreparedStatement psInsert = con
-			 * .prepareStatement("INSERT INTO users (login, password, type) VALUES (?, ?, ?)"
-			 * );
-			 * psInsert.setString(1, usernameField);
-			 * psInsert.setString(2, hashedPassword);
-			 * psInsert.setString(3, "client");
-			 * psInsert.executeUpdate();
-			 * 
-			 * PreparedStatement psCreate =
-			 * con.prepareStatement("CREATE USER ?@localhost IDENTIFIED BY ?");
-			 * psCreate.setString(1, usernameField);
-			 * psCreate.setString(2, hashedPassword);
-			 * psCreate.execute();
-			 * 
-			 * PreparedStatement psGrant =
-			 * con.prepareStatement("GRANT SELECT ON population.population TO ?@'localhost'"
-			 * );
-			 * psGrant.setString(1, usernameField);
-			 * psGrant.executeUpdate();
-			 * PreparedStatement flushPrivileges =
-			 * con.prepareStatement("FLUSH PRIVILEGES;");
-			 * flushPrivileges.executeUpdate();
-			 */
 
 			PreparedStatement psInsert = con.prepareStatement(
 					"INSERT INTO users (login, password, type) VALUES (?, ?, ?)");
@@ -139,7 +84,6 @@ public class User {
 			PreparedStatement psGrant = con.prepareStatement(grantSQL);
 			psGrant.executeUpdate();
 
-			System.out.println("User created and granted privileges successfully!");
 		} catch (SQLException e) {
 			System.out.println(e.getMessage());
 			return "error";
@@ -154,16 +98,10 @@ public class User {
 	 * @return the string with all xml's
 	 */
 	public static List<String> importDatabase(File selectedDBFile, Connection con) {
-		// selectedDBFile.getName();
-		// create table -> name
-
-		// List<String> allXMLGenerated =
 
 		List<String> XMLContent = readCSVLines(selectedDBFile);
 		XMLController.importXMLIntoDatabase(con);
 		return XMLContent;
-		// create function to convert CSV lines to XML
-		// create function to insert XML into table
 
 	}
 
