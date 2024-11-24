@@ -1,9 +1,14 @@
 package es.florida.AEV02Controller;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.StringWriter;
+import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
@@ -23,6 +28,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 public class XMLController {
     public String country;
@@ -99,7 +105,7 @@ public class XMLController {
             xmlFolder.mkdir();
             TransformerFactory tranFactory = TransformerFactory.newInstance();
             Transformer aTransformer = tranFactory.newTransformer();
-            aTransformer.setOutputProperty(OutputKeys.ENCODING, "ISO-8859-1");
+            aTransformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
             aTransformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "4");
             aTransformer.setOutputProperty(OutputKeys.INDENT, "yes");
             DOMSource source = new DOMSource(doc);
@@ -127,7 +133,7 @@ public class XMLController {
     /**
      * 
      * @param con
-    */
+     */
     public static void importXMLIntoDatabase(Connection con) {
         preparePopulationTable(con);
         try {
@@ -136,16 +142,23 @@ public class XMLController {
             for (File file : xmlFiles) {
                 DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
-                Document document = dBuilder.parse(file);
+
+                InputStream inputStream = new FileInputStream(file);
+                Reader reader = new InputStreamReader(inputStream, StandardCharsets.UTF_8);
+                InputSource inputSource = new InputSource(reader);
+                
+                Document document = dBuilder.parse(inputSource);
+                document.getDocumentElement().normalize();
+                // Document document = dBuilder.parse(file);
                 /* Element root = document.getDocumentElement(); */
                 NodeList nodeList = document.getElementsByTagName("Country");
                 for (int i = 0; i < nodeList.getLength(); i++) {
                     Node node = nodeList.item(i);
                     if (node.getNodeType() == Node.ELEMENT_NODE) {
                         Element eElement = (Element) node;
-                        System.out.println(eElement.getTextContent());
                         String[] textContextSplit = eElement.getTextContent().split("\\n");
                         String country = textContextSplit[1];
+                        System.out.println(country);
                         String population = textContextSplit[2];
                         String density = textContextSplit[3];
                         String area = textContextSplit[4];

@@ -116,16 +116,15 @@ public class DBConnection {
 
 		try {
 			FileWriter fw = new FileWriter("customQuery.csv");
-			StringBuilder headerString = new StringBuilder();
-
+			String lineHeader = "";
 			for (int i = 0; i < queryHeader.length; i++) {
-				headerString.append(queryHeader[i]);
 				if (i < queryHeader.length - 1) {
-					headerString.append(";");
+					lineHeader += queryHeader[i]+";";
+				}else{
+					lineHeader += queryHeader[i];
 				}
 			}
-
-			fw.write(headerString.toString() + "\n");
+			fw.write(lineHeader+ "\n");
 
 			for (int i = 0; i < queryRows.length; i++) {
 				for (int j = 0; j < queryRows[i].length; j++) {

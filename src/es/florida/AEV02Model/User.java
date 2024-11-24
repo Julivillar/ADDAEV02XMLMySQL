@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -115,8 +116,9 @@ public class User {
 		List<String> allXMLGenerated = new ArrayList<String>();
 
 		try {
-			FileReader fr = new FileReader(selectedDBFile);
+			FileReader fr = new FileReader(selectedDBFile, StandardCharsets.ISO_8859_1);
 			BufferedReader br = new BufferedReader(fr);
+			
 			String line = "";
 			br.readLine();
 			while ((line = br.readLine()) != null) {
